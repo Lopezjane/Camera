@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% with messages = get_flashed_messages()%}
+		{% if messages%}
+			{% for message in messages %}
+				<div class="w3-panel w3-amber w3-padding">{{ message }}</div>
+			{% endfor %}
+		{% endif %}
+	{% endwith%}
+	
+	
+    <div class="w3-row-padding">
+		<div class="w3-half">
+			<div class="w3-container w3-padding w3-round-xlarge w3-card-4">
+				<div id="my_camera" style="width:320px; height:240px; margin:auto"></div>
+				<p>
+					<label><b>IDNO</b></label>
+					<input type="text" name="idno" id="idno" class="w3-input">
+				</p>
+				<p>
+					<label><b>LASTNAME</b></label>
+					<input type="text" name="lastname" id="lastname" class="w3-input">
+				</p>
+				<p>
+					<label><b>FIRSTNAME</b></label>
+					<input type="text" name="firstname" id="firstname" class="w3-input">
+				</p>
+				<p>
+					<label><b>COURSE</b></label>
+					<input type="text" name="course" id="course" class="w3-input">
+				</p>
+				<p>
+					<label><b>LEVEL</b></label>
+					<input type="text" name="level" id="level" class="w3-input">
+				</p>
+				<button class="w3-button w3-blue w3-right" onclick="take_snapshot()">SNAP</button>
+			</div>
+		</div>
+		<div class="w3-half">
+			<div class="w3-container w3-padding w3-round-xlarge w3-card-4">
+				<div id="my_result" class="w3-center"></div>
+				<table class="w3-table-all">
+					<tr>
+						<td>IDNO</td>
+						<td>
+							<div id="my_idno"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>LASTNAME</td>
+						<td>
+							<div id="my_lastname"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>FIRSTNAME</td>
+						<td>
+							<div id="my_firstname"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>COURSE</td>
+						<td>
+							<div id="my_course"></div>
+						</td>
+					</tr>
+					<tr>
+						<td>LEVEL</td> 
+						<td>
+							<div id="my_level"></div>
+						</td>
+					</tr>
+				</table>
+				<button class="w3-button w3-blue w3-margin-top" onclick="save_information()">SAVE</button>
+			</div>
+		</div>
+	</div>
+	<script language="JavaScript">
+		Webcam.set({
+			width: 320,
+			height: 240,
+			dest_width: 320,
+			dest_height: 240,
+			image_format: 'jpeg',
+			jpeg_quality: 90,
+			force_flash: false,
+			flip_horiz: true,
+			fps: 45
+		});
+		Webcam.attach( '#my_camera' );
+		
+		function take_snapshot() {
+			Webcam.snap( function(data_uri) {
+				document.getElementById('my_result').innerHTML = "<img id='imagePrev' src='"+data_uri+"'>";
+			} );
+			document.getElementById('my_idno').innerHTML = document.getElementById('idno').value;
+			document.getElementById('my_lastname').innerHTML = document.getElementById('lastname').value;
+			document.getElementById('my_firstname').innerHTML = document.getElementById('firstname').value;
+			document.getElementById('my_course').innerHTML = document.getElementById('course').value;
+			document.getElementById('my_level').innerHTML = document.getElementById('level').value;
+		}
+		
+		function save_information(){
+			var picture = document.getElementById('imagePrev').src;
+			var idno = document.getElementById('idno').value; 
+			var lastname = document.getElementById('lastname').value;
+			var firstname = document.getElementById('firstname').value;
+			var course = document.getElementById('course').value;
+			var level = document.getElementById('level').value;
+			var imagename = idno; 
+			var url = '/savestudent?idno='+idno+'&lastname='+lastname+'&firstname='+firstname+'&course='+course+'&level='+level;
+			Webcam.upload(picture,url,function(code,text) {
+				alert("New Student Added");
+				
+			});
+		}
+		
+	</script>
+{% endblock %}
